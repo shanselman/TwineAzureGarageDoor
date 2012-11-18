@@ -1,3 +1,7 @@
 @{
-Response.Write("hello");
+Application["orientation"] = Request.QueryString["orientation"];
+Application["alerted"] = false;
+Application["time"] = DateTime.UtcNow;
+
+Response.WriteLine(Application["time"]);
 }
