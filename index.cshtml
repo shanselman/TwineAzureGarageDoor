@@ -1,0 +1,23 @@
+@{
+    var orientation = Cache["orientation"];
+    var alerted = Cache["alerted"] as bool?;
+    var since = Cache["since"] as DateTime?;
+
+    TimeSpan diff = DateTime.UtcNow - (DateTime)since;
+    Response.Write(diff.Minutes);
+
+    if (String.Equals(orientation, "bottom") && alerted == false && (diff.Minutes > 0))
+    {
+        Cache["alerted"] = true;
+        alerted = true;
+    }
+
+    var json = Json.Encode(new {
+        orientation = orientation,
+        alerted = alerted,
+        since = since
+    });
+    Response.ContentType = "application/json; charset=utf-8";
+    Response.Write(json);
+    Response.Write(json);
+}

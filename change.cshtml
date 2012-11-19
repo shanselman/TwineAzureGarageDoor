@@ -1,7 +1,7 @@
 @{
-Application["orientation"] = Request.QueryString["orientation"];
-Application["alerted"] = false;
-Application["time"] = DateTime.UtcNow;
+    Cache["orientation"] = Request.QueryString["orientation"];
+    Cache["alerted"] = false;
+    Cache["since"] = DateTime.UtcNow;
 
-Response.WriteLine(Application["time"]);
+    Response.Write("OK");
 }
