@@ -3,6 +3,8 @@
     var alerted = Cache["alerted"] as bool?;
     var since = Cache["since"] as DateTime?;
 
+    if (!since.HasValue) { Response.SetStatus(HttpStatusCode.ExpectationFailed); }
+        
     TimeSpan diff = DateTime.UtcNow - (DateTime)since;
     Response.Write(diff.Minutes);
 
