@@ -1,25 +1,33 @@
-@{
+ @using System.Configuration;
+ @{
     var orientation = Cache["orientation"];
     var alerted = Cache["alerted"] as bool?;
     var since = Cache["since"] as DateTime?;
 
-    if (!since.HasValue) { Response.SetStatus(HttpStatusCode.ExpectationFailed); }
+    if (!since.HasValue) { since = DateTime.UtcNow; } //Make it a No-op
         
     TimeSpan diff = DateTime.UtcNow - (DateTime)since;
+    int open = diff.Minutes;
    
-    if (String.Equals(orientation, "bottom") && alerted == false && (diff.Minutes > 0))
+    if (String.Equals(orientation, "bottom") && alerted == false && (open > 0))
     {
         Cache["alerted"] = true;
         alerted = true;
-        //TODO: Twilio SMS here
+        var rest = new Twilio.TwilioRestClient(
+                ConfigurationManager.AppSettings["TwilioSID"],
+                ConfigurationManager.AppSettings["TwilioToken"]);
+        var msg = rest.SendSmsMessage(  
+                ConfigurationManager.AppSettings["FromNumber"], 
+                ConfigurationManager.AppSettings["ToNumber"], 
+                String.Format("The garage door has been open for at least {0} minute{1}!", 
+                open, open != 1 ? "s" : ""));
     }
 
-    var json = Json.Encode(new {
+     var json = Json.Encode(new {
         orientation = orientation,
         alerted = alerted,
         since = since
     });
     Response.ContentType = "application/json; charset=utf-8";
-    Response.Write(json);
     Response.Write(json);
 }
